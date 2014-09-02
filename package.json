@@ -1,0 +1,27 @@
+{
+  "name": "furaito",
+  "version": "0.0.0",
+  "description": "Track your flights",
+  "main": "www/index.html",
+  "keywords": [
+    "polymer",
+    "flight",
+    "tracker"
+  ],
+  "window": {
+    "title": "Furaito",
+    "icon": "www/img/logo.png",
+    "toolbar": false,
+    "frame": true,
+    "width": 950,
+    "height": 600,
+    "position": "mouse",
+    "min_width": 950,
+    "min_height": 600
+  },
+  "webkit": {
+    "plugin": true
+  },
+  "dependencies": {
+  }
+}
