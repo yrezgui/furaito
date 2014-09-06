@@ -1,0 +1,43 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<polymer-element name="app-settings" hidden attributes="link">
+  <script>
+    window.SETTINGS = {
+      auth: {
+        clientId: '189263170366-vjgqcmkch4448lgsbc55lhl5kifl5lqt.apps.googleusercontent.com',
+        scope: 'https://www.googleapis.com/auth/gmail.readonly',
+        immediate: false
+      },
+      airlines: {
+        airfrance: {
+          pattern: {
+            email: 'from:@airfrance.fr OR from:@airfrance.com',
+            flight: /AF[\s0-9]+/
+          }
+        },
+        britishairways: {
+          pattern: {
+            email: 'from:@ba.com',
+            flight: /BA[\s0-9]+/
+          }
+        },
+        easyjet: {
+          pattern: {
+            email: 'from:@easyjet.com',
+            flight: /EZY[\s0-9]+/
+          }
+        },
+        ryanair: {
+          pattern: {
+            email: 'from:@ryanair.com',
+            flight: /FR[\s0-9]+/
+          }
+        },
+      }
+    };
+
+    Polymer('app-settings', {
+      link: window.SETTINGS
+    });
+  </script>
+</polymer-element>
