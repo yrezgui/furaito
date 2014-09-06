@@ -12,25 +12,25 @@
         airfrance: {
           pattern: {
             email: 'from:@airfrance.fr OR from:@airfrance.com',
-            flight: /AF[\s0-9]+/
+            flight: /AF\s?[0-9]{3,}/
           }
         },
         britishairways: {
           pattern: {
             email: 'from:@ba.com',
-            flight: /BA[\s0-9]+/
+            flight: /BA\s?[0-9]{3,}/
           }
         },
         easyjet: {
           pattern: {
             email: 'from:@easyjet.com',
-            flight: /EZY[\s0-9]+/
+            flight: /EZY\s?[0-9]{3,}/
           }
         },
         ryanair: {
           pattern: {
             email: 'from:@ryanair.com',
-            flight: /FR[\s0-9]+/
+            flight: /FR\s?[0-9]{3,}/
           }
         },
       }
