@@ -1,0 +1,83 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../../../bower_components/core-icon/core-icon.html">
+<link rel="import" href="../../../bower_components/google-apis/google-client-api.html">
+
+<link rel="import" href="../furaito-app/settings.html">
+<link rel="import" href="../cards/cards.html">
+
+<polymer-element name="gmail-login" attributes="auto">
+  <template>
+    <style>
+      normal-card {
+        visibility: hidden;
+      }
+
+      normal-card.active {
+        cursor: pointer;
+        visibility: visible;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 300;
+      }
+
+      core-icon {
+        color: #DD4B39;
+        margin-right: 15px;
+        height: 85px !important;
+        width: 85px !important;
+      }
+    </style>
+
+    <app-settings link="{{settings}}"></app-settings>
+    <google-client-api id="google-api" on-api-load="{{onGoogleApiLoad}}"></google-client-api>
+
+    <normal-card id="content" class="{{ {active: googleApiLoaded} | tokenList }}" on-click="{{openLoginPopup}}">
+      <section layout horizontal center>
+        <core-icon icon="mail"></core-icon>
+        <h2>Connect your Gmail</h2>
+      </div>
+    </normal-card>
+  </template>
+  <script>
+    Polymer('gmail-login', {
+      googleApiLoaded: false,
+
+      openLoginPopup: function openLoginPopup (event) {
+        this.authorize();
+      },
+      onGoogleApiLoad: function onGoogleApiLoad (event) {
+        this.auth             = this.$['google-api'].auth;
+        this.api              = this.$['google-api'].api;
+        this.googleApiLoaded  = true;
+
+        if(this.auto) {
+          this.authorize(true);
+        }
+      },
+      authorize: function authorize(immediate) {
+        var self = this;
+
+        this.auth.authorize({
+          client_id: this.settings.auth.clientId,
+          scope: this.settings.auth.scope,
+          immediate: immediate
+        }, function authorize(authResult) {
+          if(!authResult) {
+            return;
+          }
+
+          if(authResult.error) {
+            return self.fire('gmail-login-error', authResult);
+          }
+
+          self.fire('gmail-login-success', authResult);
+          console.log('gmail-login-success', authResult);
+        });
+      }
+    });
+  </script>
+</polymer-element>
