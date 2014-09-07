@@ -1,0 +1,50 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../../../bower_components/core-icon/core-icon.html">
+<link rel="import" href="../../../bower_components/polymer-filters/polymer-filters.html">
+
+<link rel="import" href="../furaito-app/app-airports.html">
+<link rel="import" href="../furaito-app/app-settings.html">
+
+<polymer-element name="flight-card" attributes="flightno" noscript>
+  <template>
+    <style>
+      normal-card {
+        margin-bottom: 20px;
+      }
+
+      div {
+        text-align: left;
+        width: 100%;
+      }
+
+      img {
+        margin-right: 10px;
+        vertical-align: middle;
+      }
+    </style>
+
+    <app-airports link="{{airports}}"></app-airports>
+    <app-settings link="{{settings}}"></app-settings>
+
+    <core-ajax auto url="https://api.import.io/store/data/{{settings.importio.datastoreId}}/_query" params='{"input/webpage/url": "{{settings.importio.webpage + flightno}}", "_user": "{{settings.importio.user}}", "_apikey": "{{settings.importio.apiKey}}"}' handleAs="json" response="{{response}}"></core-ajax>
+
+    <template if="{{response}}">
+      <normal-card id="content">
+        <section>
+          <div>
+            <img src="img/countries/{{airports[response.results[0].depairport].iso | lowercase}}.png">
+            <span>{{airports[response.results[0].depairport].name || 'No name found'}}</span>
+          </div>
+          <div>
+            <img src="../../img/down.png">
+          </div>
+          <div>
+            <img src="img/countries/{{airports[response.results[0].arrairport].iso | lowercase}}.png">
+            <span>{{airports[response.results[0].arrairport].name || 'No name found'}}</span>
+          </div>
+        </div>
+      </normal-card>
+    </template>
+  </template>
+</polymer-element>
