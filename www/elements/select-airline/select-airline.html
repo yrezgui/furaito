@@ -1,0 +1,43 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../../../bower_components/core-icon/core-icon.html">
+
+<link rel="import" href="../cards/cards.html">
+
+<polymer-element name="select-airline">
+  <template>
+    <style>
+      :host {
+        text-align: center;
+      }
+
+      h2 {
+        font-weight: 300;
+      }
+      
+      img {
+        border-radius: 3px;
+        height: 80px;
+        margin: 10px;
+        cursor: pointer;
+      }
+    </style>
+
+    <normal-card>
+      <h2>Choose your Airline</h2>
+      <section layout horizontal center>
+        <img on-click="{{ selectOne }}" src="../../img/airlines/britishairways.png" data-name="britishairways">
+        <img on-click="{{ selectOne }}" src="../../img/airlines/airfrance.png" data-name="airfrance">
+        <img on-click="{{ selectOne }}" src="../../img/airlines/easyjet.png" data-name="easyjet">
+        <img on-click="{{ selectOne }}" src="../../img/airlines/ryanair.png" data-name="ryanair">
+      </section>
+    </normal-card>
+  </template>
+  <script>
+    Polymer('select-airline', {
+      selectOne: function selectOne(event) {
+        this.fire('select-airline', event.currentTarget.dataset.name);
+      }
+    });
+  </script>
+</polymer-element>
