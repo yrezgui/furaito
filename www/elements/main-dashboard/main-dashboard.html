@@ -1,0 +1,152 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../../../bower_components/core-icon/core-icon.html">
+<link rel="import" href="../../../bower_components/core-icon-button/core-icon-button.html">
+<link rel="import" href="../../../bower_components/google-apis/google-client-api.html">
+<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/core-ajax/core-ajax.html">
+
+<link rel="import" href="../libs/lodash.html">
+
+<link rel="import" href="../furaito-app/app-settings.html">
+<link rel="import" href="../furaito-app/app-airports.html">
+<link rel="import" href="../flight-card/flight-card.html">
+<link rel="import" href="../cards/cards.html">
+
+<polymer-element name="main-dashboard" attributes="airline">
+  <template>
+    <style>
+    normal-card {
+      visibility: hidden;
+      margin-bottom: 15px;
+    }
+
+    normal-card.active {
+      cursor: pointer;
+      visibility: visible;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 300;
+    }
+
+    core-icon {
+      color: #DD4B39;
+      margin-right: 15px;
+      height: 85px !important;
+      width: 85px !important;
+    }
+    </style>
+    
+    <app-settings link="{{settings}}"></app-settings>
+    <google-client-api id="google-api" on-api-load="{{onGoogleApiLoad}}"></google-client-api>
+
+    <template repeat="{{flights as flight}}">
+      <flight-card flightno="{{flight}}"></flight-card>
+    </template>
+  </template>
+  <script>
+    Polymer('main-dashboard', {
+      flights: [],
+      status: 'start',
+      percentageLoading: 0,
+
+      onGoogleApiLoad: function onGoogleApiLoad (event) {
+        this.auth = this.$['google-api'].auth;
+        this.api  = this.$['google-api'].api;
+
+        console.log('google api loaded');
+        this.getEmailsList();
+      },
+      onAirportsListLoad: function onAirportsListLoad (event) {
+
+      },
+      getEmailPayload: function getEmailPayload(response) {
+        if(response.result.payload.body.data) {
+          return response.result.payload.body.data;
+        }
+
+        if(response.result.payload.parts[0].mimetype === 'multipart/alternative') {
+          var validPart = _.find(response.result.payload.parts[0].parts, function(part) {
+            return part.body.size > 0;
+          });
+
+          if(!validPart) {
+            return;
+          }
+
+          return validPart.body.data;
+        }
+
+        return response.result.payload.parts[0].body.data;
+      },
+      getEmailsList: function getEmailsList() {
+        var self    = this;
+        self.status = 'list-emails-loading';
+
+        var request = self.api.request({
+          path: 'gmail/v1/users/me/messages/',
+          params: {
+            userId: 'me',
+            q: self.settings.airlines[self.airline].pattern.email,
+            maxResults: 100
+          }
+        });
+
+        request.execute(function(response) {
+          if(!response.messages) {
+            return;
+          }
+
+          self.status   = 'content-emails-loading';
+          var emailIds = _.pluck(response.messages, 'id');
+
+          self.getEmailsContent(emailIds);
+        });
+      },
+      getEmailsContent: function getEmailsContent(emailIds) {
+        var self      = this;
+        var emails    = {};
+        var httpBatch = self.api.newHttpBatch();
+
+        _.each(emailIds, function getEmailContent(messageId) {
+          httpBatch.add(self.api.request({
+            path: 'gmail/v1/users/me/messages/' + messageId
+          }));
+        });
+
+        httpBatch.execute(function batchCallback(jsonResponse) {
+          _.each(jsonResponse, function cacheEmailContent(response) {
+            var rawEmail = self.getEmailPayload(response);
+
+            if(!rawEmail) {
+              return;
+            }
+
+            emails[response.result.id] = atob(rawEmail.replace(/\-/g, '+').replace(/_/g, '/'))
+          });
+
+          console.log('data cached');
+
+          _.each(emails, function parsing(email) {
+            if(!email) {
+              return;
+            }
+
+            var match = self.settings.airlines[self.airline].pattern.flight.exec(email);
+
+            if(!match || match.length === 0) {
+              return;
+            }
+
+            self.flights.push(match[0].replace(' ', '').trim());
+          });
+
+          console.log('list flights', self.flights);
+        });
+      }
+    });
+  </script>
+</polymer-element>
