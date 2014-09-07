@@ -1,0 +1,90 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/core-header-panel/core-header-panel.html">
+<link rel="import" href="../../../bower_components/core-toolbar/core-toolbar.html">
+<link rel="import" href="../../../bower_components/core-icon-button/core-icon-button.html">
+
+
+<link rel="import" href="../gmail-login/gmail-login.html">
+<link rel="import" href="../select-airline/select-airline.html">
+<link rel="import" href="../main-dashboard/main-dashboard.html">
+ 
+<polymer-element name="furaito-app">
+  <template>
+    <style>
+      core-header-panel {
+        height: 100%;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch; 
+      }
+
+      core-toolbar, core-toolbar::shadow .toolbar-tools {
+        background: #fff;
+        height: 100px;
+      }
+
+      header {
+        color: #4C5665;
+        text-align: center;
+      }
+
+      header h1 {
+        font-weight: 300;
+      }
+
+      header img {
+        vertical-align: middle;
+        margin-right: 5px;
+      }
+
+      .container {
+        width: 100%;
+        margin: 50px auto;
+      }
+
+      .main {
+        margin: 0 auto;
+      }
+    </style>
+    <core-header-panel>
+      <core-toolbar>
+        <header flex>
+          <h1><img src="../../img/logo.png"> Furaito</h1>
+        </header>
+      </core-toolbar>
+
+      <div class="container" layout horizontal center>
+
+        <template if="{{ route === 'login' }}">
+          <gmail-login class="main" on-gmail-login-success="{{ onLoginSuccess }}" auto="true"></gmail-login>
+        </template>
+
+        <template if="{{ route === 'select-airline' }}">
+          <select-airline class="main" on-select-airline="{{ onSelectAirline }}"></select-airline>
+        </template>
+
+        <template if="{{ route === 'dashboard' }}">
+          <main-dashboard class="main" airline="{{ airline }}"></main-dashboard>
+        </template>
+      </div>
+    </core-header-panel>
+  </template>
+
+  <script>
+
+    Polymer('furaito-app', {
+      route: 'login',
+      onLoginSuccess: function onLoginSuccess(event) {
+        this.route = 'select-airline';
+      },
+      onSelectAirline: function onSelectAirline(event, airline) {
+        if(!airline) {
+          return;
+        }
+
+        this.airline  = airline;
+        this.route    = 'dashboard';
+      }
+    });
+
+  </script>
+</polymer-element>
