@@ -17,31 +17,22 @@
   <template>
     <style>
     normal-card {
-      visibility: hidden;
       margin-bottom: 15px;
     }
 
-    normal-card.active {
-      cursor: pointer;
-      visibility: visible;
-    }
-
     h2 {
-      margin: 0;
       font-size: 1.8rem;
       font-weight: 300;
-    }
-
-    core-icon {
-      color: #DD4B39;
-      margin-right: 15px;
-      height: 85px !important;
-      width: 85px !important;
+      text-align: center;
     }
     </style>
     
     <app-settings link="{{settings}}"></app-settings>
     <google-client-api id="google-api" on-api-load="{{onGoogleApiLoad}}"></google-client-api>
+
+    <normal-card id="loading">
+      <h2>Loading...</h2>
+    </normal-card>
 
     <template repeat="{{flights as flight}}">
       <flight-card flightno="{{flight}}"></flight-card>
@@ -59,9 +50,6 @@
 
         console.log('google api loaded');
         this.getEmailsList();
-      },
-      onAirportsListLoad: function onAirportsListLoad (event) {
-
       },
       getEmailPayload: function getEmailPayload(response) {
         if(response.result.payload.body.data) {
@@ -110,6 +98,7 @@
         var self      = this;
         var emails    = {};
         var httpBatch = self.api.newHttpBatch();
+        self.flights  = [];
 
         _.each(emailIds, function getEmailContent(messageId) {
           httpBatch.add(self.api.request({
@@ -145,6 +134,7 @@
           });
 
           console.log('list flights', self.flights);
+          self.$.loading.style.display = 'none';
         });
       }
     });
