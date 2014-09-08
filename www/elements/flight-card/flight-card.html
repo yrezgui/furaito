@@ -6,7 +6,7 @@
 <link rel="import" href="../furaito-app/app-airports.html">
 <link rel="import" href="../furaito-app/app-settings.html">
 
-<polymer-element name="flight-card" attributes="flightno" noscript>
+<polymer-element name="flight-card" attributes="flightno">
   <template>
     <style>
       normal-card {
@@ -27,24 +27,54 @@
     <app-airports link="{{airports}}"></app-airports>
     <app-settings link="{{settings}}"></app-settings>
 
-    <core-ajax auto url="https://api.import.io/store/data/{{settings.importio.datastoreId}}/_query" params='{"input/webpage/url": "{{settings.importio.webpage + flightno}}", "_user": "{{settings.importio.user}}", "_apikey": "{{settings.importio.apiKey}}"}' handleAs="json" response="{{response}}"></core-ajax>
+    <core-ajax auto url="https://api.import.io/store/data/{{settings.importio.datastoreId}}/_query" params='{"input/webpage/url": "{{settings.importio.webpage + flightno}}", "_user": "{{settings.importio.user}}", "_apikey": "{{settings.importio.apiKey}}"}' handleAs="json" on-core-response="{{handleResponse}}"></core-ajax>
 
     <template if="{{response}}">
       <normal-card id="content">
         <section>
           <div>
-            <img src="img/countries/{{airports[response.results[0].depairport].iso | lowercase}}.png">
-            <span>{{airports[response.results[0].depairport].name || 'No name found'}}</span>
+            <img src="www/img/countries/{{airports[response.results[0].depairport].iso | lowercase}}.png">
+            <span>{{airports[response.results[0].depairport].name || 'No name found'}} ({{flightno}})</span>
           </div>
           <div>
-            <img src="../../img/down.png">
+            <img src="down.png">
           </div>
           <div>
-            <img src="img/countries/{{airports[response.results[0].arrairport].iso | lowercase}}.png">
+            <img src="www/img/countries/{{airports[response.results[0].arrairport].iso | lowercase}}.png">
             <span>{{airports[response.results[0].arrairport].name || 'No name found'}}</span>
           </div>
-        </div>
+        </section>
       </normal-card>
     </template>
   </template>
+
+  <script>
+    Polymer('flight-card', {
+      handleResponse: function handleResponse (event) {
+        var response = event.detail.response;
+
+        if(response.results.length === 0) {
+          return;
+        }
+
+        if(!this.airports[response.results[0].depairport]) {
+          var depairport = _.find(this.airports, { icao: response.results[0].depairport });
+
+          if(depairport) {
+            response.results[0].depairport = depairport.iata;
+          }
+        }
+
+        if(!this.airports[response.results[0].arrairport]) {
+          var arrairport = _.find(this.airports, { icao: response.results[0].arrairport });
+
+          if(arrairport) {
+            response.results[0].arrairport = arrairport.iata;
+          }
+        }
+
+        this.response = response;
+      }
+    });
+  </script>
 </polymer-element>
