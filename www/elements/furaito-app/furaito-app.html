@@ -36,6 +36,10 @@
         margin-right: 5px;
       }
 
+      .hide {
+        visibility: hidden;
+      }
+
       .container {
         width: 100%;
         margin: 50px auto;
@@ -45,11 +49,20 @@
         margin: 0 auto;
       }
     </style>
+    
+    <polymer-jsonp id="logoutRequest" on-polymer-response="{{onLogout}}"></polymer-jsonp>
+
     <core-header-panel>
       <core-toolbar>
+        <core-icon-button icon="arrow-back" on-click="{{goToSelectAirlinePage}}" class="{{ {hide: route !== 'dashboard'} | tokenList }}">
+          <span> Back</span>
+        </core-icon-button>
         <header flex>
           <h1><img src="../../img/logo.png"> Furaito</h1>
         </header>
+        <core-icon-button icon="exit-to-app" on-click="{{logout}}" class="{{ {hide: route === 'login'} | tokenList }}">
+          <span> Logout</span>
+        </core-icon-button>
       </core-toolbar>
 
       <div class="container" layout horizontal center>
@@ -83,6 +96,17 @@
 
         this.airline  = airline;
         this.route    = 'dashboard';
+      },
+      goToSelectAirlinePage: function goToSelectAirlinePage() {
+        this.route = 'select-airline';
+      },
+      logout: function logout() {
+        this.$.logoutRequest.url = 'https://accounts.google.com/o/oauth2/revoke?token=' + window.gapi.auth.getToken().access_token + '&callback=';
+
+        this.$.logoutRequest.go();
+      },
+      onLogout: function onLogout() {
+        window.location.reload();
       }
     });
 
