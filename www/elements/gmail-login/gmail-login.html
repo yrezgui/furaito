@@ -14,7 +14,6 @@
       }
 
       normal-card.active {
-        cursor: pointer;
         visibility: visible;
       }
 
@@ -22,6 +21,8 @@
         margin: 0;
         font-size: 1.8rem;
         font-weight: 300;
+        border-bottom: 1px dashed rgba(76, 86, 101, 0.3);
+        padding-bottom: 5px;
       }
 
       core-icon {
@@ -30,16 +31,32 @@
         height: 85px !important;
         width: 85px !important;
       }
+
+      .action {
+        cursor: pointer;
+      }
+
+      .description {
+        margin-top: 30px;
+      }
     </style>
 
     <app-settings link="{{settings}}"></app-settings>
     <google-client-api id="google-api" on-api-load="{{onGoogleApiLoad}}"></google-client-api>
 
-    <normal-card id="content" class="{{ {active: googleApiLoaded} | tokenList }}" on-click="{{openLoginPopup}}">
-      <section layout horizontal center>
+    <normal-card id="content" class="{{ {active: googleApiLoaded} | tokenList }}">
+      <section layout horizontal center class="action" on-click="{{openLoginPopup}}">
         <core-icon icon="mail"></core-icon>
         <h2>Connect your Gmail</h2>
-      </div>
+      </section>
+      <section class="description">
+      <p>Furaito is a simple mail that checks your emails to find your last flights.</p>
+      <p>It uses <a href="http://www.polymer-project.org/" target="_blank">Polymer</a>, <a href="https://import.io/" target="_blank">Import.io</a> and <a href="https://developers.google.com/gmail/api/" target="_blank">Gmail API</a>.</p>
+      <p>No data is stored. The processing is done directly in the browser</p>
+      <p>You can star the project on <a href="https://github.com/yrezgui/furaito" target="_blank">Github</a> and have a look to <a href="http://www.yrezgui.com/" target="_blank">my website</a> or <a href="https://medium.com/@yrezgui" target="_blank">blog</a>.</p>
+      
+    
+  </section>
     </normal-card>
   </template>
   <script>
