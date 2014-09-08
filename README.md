@@ -7,3 +7,7 @@ It uses [Polymer](http://www.polymer-project.org/), [Import.io](https://import.i
 No data is stored. The processing is done directly in the browser.
 
 Have a look to [my website](http://www.yrezgui.com/) or [blog](https://medium.com/@yrezgui).
+
+#### Demo
+
+You can play with it here: http://www.yrezgui.com/furaito/
