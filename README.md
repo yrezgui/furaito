@@ -2,7 +2,7 @@
 
 #### Track your flights
 
-Furaito is a simple mail that checks your emails to find your last flights.
+Furaito is a simple app that checks your emails to find your last flights.
 It uses [Polymer](http://www.polymer-project.org/), [Import.io](https://import.io/) and [Gmail API](https://developers.google.com/gmail/api/).
 No data is stored. The processing is done directly in the browser.
 
