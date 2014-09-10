@@ -11,3 +11,7 @@ Have a look to [my website](http://www.yrezgui.com/) or [blog](https://medium.co
 #### Demo
 
 You can play with it here: http://www.yrezgui.com/furaito/
+
+
+#### Posts I wrote about it
+- Web components: https://medium.com/dev-rocket/components-the-future-of-html-development-f692b5b6e22b
